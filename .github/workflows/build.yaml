@@ -10,5 +10,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        run: docker build -t temp/build
-      
+      - name: Build Image and Push Docker
+        run: |
+          cd node
+          docker build -t temp/build .
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          docker tag temp/build zahrikargo/assignment:latest
+          docker tag temp/build zahrikargo/assignment:${{ github.sha }} 
+          docker push zahrikargo/assignment:latest
+          docker push zahrikargo/assignment:${{ github.sha }}
